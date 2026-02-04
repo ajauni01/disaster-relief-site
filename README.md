@@ -1,3 +1,4 @@
 # disaster-relief-site
-##Contributers
-Ethan McEvoy
+#Contributers
+Ethan McEvoy /n
+Carter Hasemann
