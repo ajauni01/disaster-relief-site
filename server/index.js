@@ -1,5 +1,25 @@
+/**
+ * Ethan McEvoy
+ * Spring 2026
+ * This is the server side of the disaster relief website made for Senior Semenar. It relies on helpRequest and
+ * vonteers.js to send data to the database from the front end.
+ */
+
+POST   /api/help-requests
+GET    /api/help-requests
+//GET    /api/help-requests/:id
+
+POST   /api/volunteers
+GET    /api/volunteers
+//GET    /api/volunteers/:id
+
 import express from "express";
 import dotenv from "dotenv";
+import helpRoutes from "./routes/helpRequests.js";
+import volunteerRoutes from "./routes/volunteers.js";
+
+app.use("/api/help", helpRoutes);
+app.use("/api/volunteers", volunteerRoutes);
 
 dotenv.config();
 
@@ -24,3 +44,4 @@ app.get("/api/health", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
