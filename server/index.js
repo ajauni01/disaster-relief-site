@@ -1,3 +1,11 @@
+/**
+ * Ethan McEvoy
+ * Spring 2026
+ * 
+ */
+
+import helpRoutes from "./routes/helpRequests.js";
+import volunteerRoutes from "./routes/volunteers.js";
 import express from "express";
 import dotenv from "dotenv";
 
@@ -7,6 +15,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.use("/api/help-requests", helpRoutes);
+app.use("/api/volunteers", volunteerRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
