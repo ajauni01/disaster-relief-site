@@ -1,45 +1,21 @@
-/**
- * Ethan McEvoy
- * Spring 2026
- * 
- */
+const app = require('./src/app');
+const config = require('./src/config/env');
+const { connectDatabase } = require('./src/config/db');
+const { seedIfNeeded } = require('./src/data/seedData');
 
-import helpRoutes from "./routes/helpRequests.js";
-import volunteerRoutes from "./routes/volunteers.js";
-import express from "express";
-import dotenv from "dotenv";
+async function startServer() {
+  try {
+    await connectDatabase(config.mongoUri);
+    await seedIfNeeded();
 
-dotenv.config();
+    app.listen(config.port, () => {
+      console.log(`Server listening on port ${config.port}`);
+      console.log(`Environment: ${config.nodeEnv}`);
+    });
+  } catch (error) {
+    console.error('Startup failure:', error.message);
+    process.exit(1);
+  }
+}
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-const mongoose = require('mongoose');
-
-mongoose.connect('mongodb+srv://leratolamla_db_user:tPBVe3Nr2KmRlwQP@cluster0.knjejmg.mongodb.net/?appName=Cluster0', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
-
-// Middleware
-app.use("/api/help-requests", helpRoutes);
-app.use("/api/volunteers", volunteerRoutes);
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Test route
-app.get("/", (req, res) => {
-  res.json({ message: "Server is running 🚀" });
-});
-
-// Example API route
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "OK" });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+startServer();
