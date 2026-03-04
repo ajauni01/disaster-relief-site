@@ -1,47 +1,21 @@
-/**
- * Ethan McEvoy
- * Spring 2026
- * This is the server side of the disaster relief website made for Senior Semenar. It relies on helpRequest and
- * vonteers.js to send data to the database from the front end.
- */
+const app = require('./src/app');
+const config = require('./src/config/env');
+const { connectDatabase } = require('./src/config/db');
+const { seedIfNeeded } = require('./src/data/seedData');
 
-POST   /api/help-requests
-GET    /api/help-requests
-//GET    /api/help-requests/:id
+async function startServer() {
+  try {
+    await connectDatabase(config.mongoUri);
+    await seedIfNeeded();
 
-POST   /api/volunteers
-GET    /api/volunteers
-//GET    /api/volunteers/:id
+    app.listen(config.port, () => {
+      console.log(`Server listening on port ${config.port}`);
+      console.log(`Environment: ${config.nodeEnv}`);
+    });
+  } catch (error) {
+    console.error('Startup failure:', error.message);
+    process.exit(1);
+  }
+}
 
-import express from "express";
-import dotenv from "dotenv";
-import helpRoutes from "./routes/helpRequests.js";
-import volunteerRoutes from "./routes/volunteers.js";
-
-app.use("/api/help", helpRoutes);
-app.use("/api/volunteers", volunteerRoutes);
-
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Test route
-app.get("/", (req, res) => {
-  res.json({ message: "Server is running 🚀" });
-});
-
-// Example API route
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "OK" });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
-
+startServer();
